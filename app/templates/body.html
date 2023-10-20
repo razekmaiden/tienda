@@ -1,9 +1,13 @@
 {% extends './base.html' %}
 
 {% block body %}
+<!-- include es una palabra clave de jinja2 que permite incluir una plantilla -->
+{% include './nav.html' %}
+<!-- py-3 padding eje y de 3 unidades -->
+<!-- La clase container forma parte de bootstrap -->
+<div class="container py-3"> 
+    {% block container %}
 
-{% block container %}
-
-{% endblock %}
-
+    {% endblock %}
+</div>
 {% endblock %}
