@@ -10,6 +10,7 @@
 {% block body %}
 <!-- En la siguiente linea se define la accion y el metodo mediante el cual se hara envio del formulario -->
 <form class="form-signin" action="/login" method="POST">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     <img class="mb-4" src="{{ url_for('static', filename='img/flask.svg') }}" alt="" width="72" height="72">
     <h1 class="h3 mb-3 font-weight-normal">Inicio de Sesi&oacute;n</h1>
     <label for="usuario" class="visually-hidden">Usuario</label>

@@ -1,5 +1,9 @@
 from flask import Flask, render_template, request, url_for, redirect
+from flask_wtf.csrf import CSRFProtect
+
 app = Flask(__name__)
+
+csrf = CSRFProtect()
 
 @app.route('/')
 def index():
@@ -26,5 +30,6 @@ def pagina_no_encontrada(error):
 
 def inicializar_app(config): # Aca se ingresa como argumento la configuracion definida en config.py
     app.config.from_object(config)
+    csrf.init_app(app)
     app.register_error_handler(404, pagina_no_encontrada) # El manejador de errores permite redirigir a la vista correcta cuando hay un error 404 en este caso. 
     return app
