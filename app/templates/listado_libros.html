@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <table>
+        {% for l  in data.libros %}
+        <tr>
+            <td>{{ l.isbn }}</td>
+            <td>{{ l.titulo }}</td>
+            <td>{{ l.anoedicion }}</td>
+            <td>{{ l.apellidos }}</td>
+            <td>{{ l.nombres }}</td>
+            <td>{{ l.precio }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>

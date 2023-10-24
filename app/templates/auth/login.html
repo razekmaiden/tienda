@@ -14,10 +14,10 @@
     <img class="mb-4" src="{{ url_for('static', filename='img/flask.svg') }}" alt="" width="72" height="72">
     <h1 class="h3 mb-3 font-weight-normal">Inicio de Sesi&oacute;n</h1>
     <label for="usuario" class="visually-hidden">Usuario</label>
-    <input type="text" id="usuario" name="usuario" class="form-control" placeholder="Usuario" required autofocus>
+    <input type="text" id="usuario" name="usuario" class="form-control" placeholder="Usuario" minlength="6" maxlength="20" required autofocus>
     <br />
     <label for="password" class="visually-hidden">Password</label>
-    <input type="password" id="password" name="password" class="form-control" placeholder="Password" required>
+    <input type="password" id="password" name="password" class="form-control" placeholder="Password" minlength="6" required>
     <button class="btn btn-lg btn-primary btn-block" type="submit">Iniciar Sesi&oacute;n</button>
     <p class="mt-5 mb-3 text-muted">&copy; 2023</p>
   </form>
