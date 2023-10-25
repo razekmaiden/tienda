@@ -19,6 +19,15 @@
     <label for="password" class="visually-hidden">Password</label>
     <input type="password" id="password" name="password" class="form-control" placeholder="Password" minlength="6" required>
     <button class="btn btn-lg btn-primary btn-block" type="submit">Iniciar Sesi&oacute;n</button>
+
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        {% for message in messages %}
+          <h1> {{ message }}</h1>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
     <p class="mt-5 mb-3 text-muted">&copy; 2023</p>
   </form>
   {% block customJS %}

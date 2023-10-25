@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, url_for, redirect
+from flask import Flask, render_template, request, url_for, redirect, flash
 #from flask_mysqldb import MySQL
 from peewee import MySQLDatabase, Model, CharField, IntegerField, FloatField
 from flask_wtf.csrf import CSRFProtect
@@ -52,6 +52,7 @@ def login():
             login_user(usuario_logueado) # Usuario que inicio sesion y esta logueado correctamente -> la sesion actual
             return redirect(url_for('index'))
         else:
+            flash('Credenciales Inválidas ...') # Mensaje flash
             return render_template('auth/login.html')
     else:
         return render_template('auth/login.html')
