@@ -7,6 +7,9 @@ from config import config
 
 
 from .models.ModeloLibro import ModeloLibro
+from .models.ModeloUsuario import ModeloUsuario
+
+from .models.entities.Usuario import Usuario
 
 app = Flask(__name__)
 
@@ -27,6 +30,11 @@ db = MySQLDatabase(**config['development'].DB_CREDENTIALS)
 def index():
     return render_template('index.html')
 
+@app.route('/password/<password>')
+def generar_password(password):
+    pass
+    
+
 @app.route('/login', methods=['GET', 'POST']) # Aca se indican los metodos permitidos, por defecto solo es GET
 def login():
     # print(request.method)
@@ -36,7 +44,10 @@ def login():
     if request.method == 'POST': # Si el metodo es post, entonces los datoss estan presentes y los puedo imprimir
         # print(request.form['usuario'])
         # print(request.form['password'])
-        if request.form['usuario'] == 'admin' and request.form['password'] == '123456':
+        #request.form['usuario'] == 'admin' and request.form['password'] == '123456'
+        usuario = Usuario(id_autor=None, usuario=request.form['usuario'], password=request.form['password'], tipousuario=None)
+        usuario_logueado = ModeloUsuario.login(db, usuario)
+        if usuario_logueado != None:
             return redirect(url_for('index'))
         else:
             return render_template('auth/login.html')
