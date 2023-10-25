@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, url_for, redirect
 #from flask_mysqldb import MySQL
 from peewee import MySQLDatabase, Model, CharField, IntegerField, FloatField
 from flask_wtf.csrf import CSRFProtect
-from flask_login import LoginManager, login_user
+from flask_login import LoginManager, login_user, logout_user
 
 from config import config
 
@@ -28,6 +28,7 @@ login_manager_app = LoginManager(app) # administracion de login
 # Le paso la aplicacion como argumento. Esta instancia sirve para realizar conexiones a travez de los modelos
 # Los modelos definen las acciones que vamos a hacer sobre las tablas.
 
+#Permite obtener todos los datos del usuario a partir del id del mismo
 @login_manager_app.user_loader
 def load_user(id_user):
     return ModeloUsuario.obtener_por_id(db, id_user)
@@ -43,14 +44,8 @@ def generar_password(password):
 
 @app.route('/login', methods=['GET', 'POST']) # Aca se indican los metodos permitidos, por defecto solo es GET
 def login():
-    # print(request.method)
-    # print(request.form['usuario'])
-    # print(request.form['password'])
-    # NOTE: COn el metodos POST los datos del formaulario van en la URL, lo que no es seguro
+    # NOTE: Con el metodos POST los datos del formaulario van en la URL, lo que no es seguro
     if request.method == 'POST': # Si el metodo es post, entonces los datoss estan presentes y los puedo imprimir
-        # print(request.form['usuario'])
-        # print(request.form['password'])
-        #request.form['usuario'] == 'admin' and request.form['password'] == '123456'
         usuario = Usuario(id_usuario=None, usuario=request.form['usuario'], password=request.form['password'], tipousuario=None)
         usuario_logueado = ModeloUsuario.login(db, usuario)
         if usuario_logueado != None:
@@ -60,6 +55,11 @@ def login():
             return render_template('auth/login.html')
     else:
         return render_template('auth/login.html')
+
+@app.route('/logout')
+def logout():
+    logout_user()
+    return redirect(url_for('login'))
 
 @app.route('/libros')
 def listar_libros():
