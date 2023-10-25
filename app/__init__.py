@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, url_for, redirect
 #from flask_mysqldb import MySQL
 from peewee import MySQLDatabase, Model, CharField, IntegerField, FloatField
 from flask_wtf.csrf import CSRFProtect
+from flask_login import LoginManager, login_user
 
 from config import config
 
@@ -17,6 +18,7 @@ app = Flask(__name__)
 
 csrf = CSRFProtect()
 db = MySQLDatabase(**config['development'].DB_CREDENTIALS)
+login_manager_app = LoginManager(app) # administracion de login
 
 # Define a model representing a table in the database
 
@@ -25,6 +27,10 @@ db = MySQLDatabase(**config['development'].DB_CREDENTIALS)
 #print(db.connection.cursor())
 # Le paso la aplicacion como argumento. Esta instancia sirve para realizar conexiones a travez de los modelos
 # Los modelos definen las acciones que vamos a hacer sobre las tablas.
+
+@login_manager_app.user_loader
+def load_user(id_user):
+    return ModeloUsuario.obtener_por_id(db, id_user)
 
 @app.route('/')
 def index():
@@ -45,9 +51,10 @@ def login():
         # print(request.form['usuario'])
         # print(request.form['password'])
         #request.form['usuario'] == 'admin' and request.form['password'] == '123456'
-        usuario = Usuario(id_autor=None, usuario=request.form['usuario'], password=request.form['password'], tipousuario=None)
+        usuario = Usuario(id_usuario=None, usuario=request.form['usuario'], password=request.form['password'], tipousuario=None)
         usuario_logueado = ModeloUsuario.login(db, usuario)
         if usuario_logueado != None:
+            login_user(usuario_logueado) # Usuario que inicio sesion y esta logueado correctamente -> la sesion actual
             return redirect(url_for('index'))
         else:
             return render_template('auth/login.html')

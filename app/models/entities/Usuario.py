@@ -1,8 +1,10 @@
 from werkzeug.security import generate_password_hash, check_password_hash
+from flask_login import UserMixin
 
-class Usuario:
-    def __init__(self, id_autor, usuario, password, tipousuario):
-        self.id = id_autor
+# Heredar de la clase UserMixin permite que la clase Usuario sea compatible con el control de sesiones (error de atributo 'is_active')
+class Usuario(UserMixin):
+    def __init__(self, id_usuario, usuario, password, tipousuario):
+        self.id = id_usuario
         self.usuario = usuario
         self.password = password
         self.tipousuario = tipousuario
