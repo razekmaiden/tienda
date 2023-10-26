@@ -51,6 +51,7 @@ def login():
         usuario_logueado = ModeloUsuario.login(db, usuario)
         if usuario_logueado != None:
             login_user(usuario_logueado) # Usuario que inicio sesion y esta logueado correctamente -> la sesion actual
+            flash(LOGIN_EXITOSO, category='success') # Mensaje flash
             return redirect(url_for('index'))
         else:
             flash(LOGIN_CREDENCIALES_INVALIDAS, category='warning') # Mensaje flash
