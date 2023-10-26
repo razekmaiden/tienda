@@ -4,7 +4,7 @@
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarNav">
-      <ul class="navbar-nav">
+      <ul class="navbar-nav mr-auto">
         <li class="nav-item">
           <!-- Ojo tecordar que en flask siempre se recomienda utilziar url_for con el nombre de metodo en lugar de colocar la ruta del template html -->
           <a class="nav-link" href="{{ url_for('index') }}">Index</a>
@@ -13,5 +13,10 @@
           <a class="nav-link" href="{{ url_for('logout') }}">Logout</a>
         </li>
       </ul>
+      <span class="navbar-text">
+        <!-- current_user.usuario hace referencia al usuario actual desde flask-login -->
+        
+        <strong>{{ current_user.usuario }}</strong> ({{ current_user.tipousuario.nombre }})
+      </span>
     </div>
   </nav>
