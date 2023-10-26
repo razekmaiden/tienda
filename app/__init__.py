@@ -53,7 +53,7 @@ def login():
             login_user(usuario_logueado) # Usuario que inicio sesion y esta logueado correctamente -> la sesion actual
             return redirect(url_for('index'))
         else:
-            flash(LOGIN_CREDENCIALES_INVALIDAS) # Mensaje flash
+            flash(LOGIN_CREDENCIALES_INVALIDAS, category='warning') # Mensaje flash
             return render_template('auth/login.html')
     else:
         return render_template('auth/login.html')
@@ -61,7 +61,7 @@ def login():
 @app.route('/logout')
 def logout():
     logout_user()
-    flash(LOGOUT)
+    flash(LOGOUT, category='success')
     return redirect(url_for('login'))
 
 @app.route('/libros')
