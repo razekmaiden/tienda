@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, url_for, redirect, flash
 #from flask_mysqldb import MySQL
 from peewee import MySQLDatabase, Model, CharField, IntegerField, FloatField
 from flask_wtf.csrf import CSRFProtect
-from flask_login import LoginManager, login_user, logout_user
+from flask_login import LoginManager, login_user, logout_user, login_required
 
 from config import config
 
@@ -35,6 +35,7 @@ def load_user(id_user):
     return ModeloUsuario.obtener_por_id(db, id_user)
 
 @app.route('/')
+@login_required
 def index():
     return render_template('index.html')
 
@@ -66,6 +67,7 @@ def logout():
     return redirect(url_for('login'))
 
 @app.route('/libros')
+@login_required
 def listar_libros():
     try:
         libros = ModeloLibro.listar_libros(db)
@@ -80,9 +82,13 @@ def listar_libros():
 def pagina_no_encontrada(error):
     return render_template('errores/404.html'), 404 # El segundo es el codigo de error
 
+def pagina_no_autorizada(error):
+    return redirect(url_for('login'))
+
 def inicializar_app(config): # Aca se ingresa como argumento la configuracion definida en config.py
     app.config.from_object(config)
     csrf.init_app(app)
     #print(app.config)
     app.register_error_handler(404, pagina_no_encontrada) # El manejador de errores permite redirigir a la vista correcta cuando hay un error 404 en este caso. 
+    app.register_error_handler(401, pagina_no_autorizada) # 401 Error de autenticacion, no autorizado
     return app
