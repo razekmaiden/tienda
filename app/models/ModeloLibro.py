@@ -16,6 +16,7 @@ class ModeloLibro():
     @classmethod
     def listar_libros(self, db):
         try:
+            
             db.connect()
             sql = """SELECT LIB.isbn, LIB.titulo, LIB.anoedicion, LIB.precio,
                     AUT.apellidos, AUT.nombres
@@ -23,6 +24,7 @@ class ModeloLibro():
                     ORDER BY LIB.titulo ASC"""
             cursor = db.execute_sql(sql)
             data = cursor.fetchall()
+            db.close()
             libros = []
             for row in data:
                 aut = Autor(0, row[4], row[5])

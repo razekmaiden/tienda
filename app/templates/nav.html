@@ -9,6 +9,11 @@
           <!-- Ojo tecordar que en flask siempre se recomienda utilziar url_for con el nombre de metodo en lugar de colocar la ruta del template html -->
           <a class="nav-link" href="{{ url_for('index') }}">Index</a>
         </li>
+        {% if current_user.tipousuario.id == 2 %}
+        <li class="nav-item">
+          <a class="nav-link" href="{{ url_for('listar_libros') }}">Libros</a>
+        </li>
+        {% endif %}
         <li class="nav-item">
           <a class="nav-link" href="{{ url_for('logout') }}">Logout</a>
         </li>

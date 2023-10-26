@@ -74,6 +74,7 @@ def listar_libros():
         data = {
             'libros': libros
         }
+        print("OK")
         return render_template('listado_libros.html', data=data)
     except Exception as ex:
         print(ex)

@@ -10,6 +10,7 @@ class ModeloUsuario:
             sql = f"""SELECT id, usuario, password FROM usuario WHERE usuario = '{usuario.usuario}'"""
             cursor = db.execute_sql(sql)
             data = cursor.fetchone()
+            db.close()
             if data != None:
                 coincide = Usuario.verificar_password(data[2], usuario.password)
                 if coincide:
@@ -30,6 +31,7 @@ class ModeloUsuario:
                     WHERE USU.id = {user_id}"""
             cursor = db.execute_sql(sql)
             data = cursor.fetchone()
+            db.close()
             tipousuario = TipoUsuario(data[2], data[3]) # retorno los datos de tipo de usuario a un objeto de la clase TipoUsuario
             usuario_logueado = Usuario(data[0], data[1], None, tipousuario)
             return usuario_logueado
