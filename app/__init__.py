@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, url_for, redirect, flash
 #from flask_mysqldb import MySQL
 from peewee import MySQLDatabase, Model, CharField, IntegerField, FloatField
 from flask_wtf.csrf import CSRFProtect
-from flask_login import LoginManager, login_user, logout_user, login_required
+from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 
 from config import config
 
@@ -34,10 +34,7 @@ login_manager_app = LoginManager(app) # administracion de login
 def load_user(id_user):
     return ModeloUsuario.obtener_por_id(db, id_user)
 
-@app.route('/')
-@login_required
-def index():
-    return render_template('index.html')
+
 
 @app.route('/password/<password>')
 def generar_password(password):
@@ -65,6 +62,26 @@ def logout():
     logout_user()
     flash(LOGOUT, category='success')
     return redirect(url_for('login'))
+
+@app.route('/')
+@login_required
+def index():
+    if current_user.is_authenticated:
+        if current_user.tipousuario.id == 1: # usuario admin
+            libros_vendidos = []
+            data = {
+                'titulo': 'Libros Vendidos',
+                'libros_vendidos': libros_vendidos
+            }
+        else:
+            compras = []
+            data = {
+                'titulo': 'Mis Compras',
+                'compras': compras
+            }
+        return render_template('index.html', data=data)
+    else:
+        return redirect(url_for('login'))
 
 @app.route('/libros')
 @login_required
