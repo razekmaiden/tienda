@@ -89,12 +89,12 @@ def listar_libros():
     try:
         libros = ModeloLibro.listar_libros(db)
         data = {
+            'titulo': 'Listado de libros',
             'libros': libros
         }
-        print("OK")
         return render_template('listado_libros.html', data=data)
     except Exception as ex:
-        print(ex)
+        return render_template('errores/error.html', mensaje=format(ex))
 
 
 def pagina_no_encontrada(error):

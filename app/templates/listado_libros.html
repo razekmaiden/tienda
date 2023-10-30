@@ -1,22 +1,29 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
-    <table>
-        {% for l  in data.libros %}
-        <tr>
-            <td>{{ l.isbn }}</td>
-            <td>{{ l.titulo }}</td>
-            <td>{{ l.anoedicion }}</td>
-            <td>{{ l.apellidos }}</td>
-            <td>{{ l.nombres }}</td>
-            <td>{{ l.precio }}</td>
-        </tr>
-        {% endfor %}
-    </table>
-</body>
-</html>
+{% extends './body.html' %}
+
+{% block title %}Listado de Libros{% endblock %}
+
+{% block container %}
+<div class="row">
+    <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
+        <h1>{{ data.titulo }}</h1>
+    </div>
+</div>
+
+<hr />
+<div class="row">
+{% for l in data.libros %}
+<div class="col-sm-12 col-md-6 col-lg-4 col-xl-4">   
+    <div class="card mb-4">
+        {% set url = 'img/portadas/' + l.isbn + '.jpg' %}
+        <img src="{{ url_for('static', filename=url) }}" height="320" alt="{{ l.titulo }}" class="card-img-top">
+<div class="card-body">
+    <h5 class="card-title">{{ l.titulo }}</h5>
+    <p class="card-text">{{ l.autor.nombre_completo() }}</p>
+    <button class="btn btn-block btn-primary">Comprar</button>
+</div>
+    </div>
+</div>
+{% endfor %}
+
+</div>
+{% endblock %}
