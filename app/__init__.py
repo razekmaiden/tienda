@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, url_for, redirect, flash
+from flask import Flask, render_template, request, url_for, redirect, flash, jsonify
 #from flask_mysqldb import MySQL
 from peewee import MySQLDatabase, Model, CharField, IntegerField, FloatField
 from flask_wtf.csrf import CSRFProtect
@@ -7,12 +7,16 @@ from flask_login import LoginManager, login_user, logout_user, login_required, c
 from config import config
 
 from .const import *
+import traceback
 
+from .models.ModeloCompra import ModeloCompra
 from .models.ModeloLibro import ModeloLibro
 from .models.ModeloUsuario import ModeloUsuario
 
-from .models.entities.Usuario import Usuario
 
+from .models.entities.Usuario import Usuario
+from .models.entities.Libro import Libro
+from .models.entities.Compra import Compra
 app = Flask(__name__)
 
 
@@ -94,8 +98,25 @@ def listar_libros():
         }
         return render_template('listado_libros.html', data=data)
     except Exception as ex:
+        traceback.print_exc()
         return render_template('errores/error.html', mensaje=format(ex))
 
+@app.route('/comprarLibro', methods=['POST'])
+@login_required
+def comprar_libro():
+    data_request = request.get_json() #recupero el json envisdo como parte de la peticion
+    data = {}
+    try:
+        libro = Libro(data_request["isbn"], None, None, None, None)
+        compra = Compra(None, libro, current_user)
+        
+        data['exito']= ModeloCompra.registrar_compra(db, compra)
+    except Exception as ex:
+        data['mensaje']=format(ex)
+        data['exito']=False
+
+    #Convierto diccionario a Json utilizando flask
+    return jsonify(data)
 
 def pagina_no_encontrada(error):
     return render_template('errores/404.html'), 404 # El segundo es el codigo de error
