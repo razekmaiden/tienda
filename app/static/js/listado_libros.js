@@ -49,8 +49,13 @@
                     }
                     return response.json();
                 }).then(data => {
+                    if(data.exito){
+                        notificacionSwal('¡Exito!', 'Libro Comprado', 'success', '¡Ok!')
+                    }else{
+                        notificacionSwal('Alerta!', data.mensaje, 'warning', 'Ok')
+                    }
                     // console.log("Libro comprado!");
-                    notificacionSwal('¡Exito!', 'Libro Comprado', 'success', '¡Ok!')
+                    
                 }).catch(error => {
                     // console.error(`Error: ${error}`);
                     notificacionSwal('Error', error, 'error', 'Cerrar')
