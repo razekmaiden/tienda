@@ -8,40 +8,59 @@
 // 5. Cuando se ejecuta el evento, se llama a la funcion confirmarCompra
 
 (function () {
-    const btnsComprarLibro=document.querySelectorAll('.btnComprarLibro');
-    let isbnLibroSeleccionado=null;
-    const csrf_token=document.querySelector("[name='csrf-token']").value;
+    const btnsComprarLibro = document.querySelectorAll('.btnComprarLibro');
+    let isbnLibroSeleccionado = null;
+    const csrf_token = document.querySelector("[name='csrf-token']").value;
 
-    btnsComprarLibro.forEach((btn)=>{
-        btn.addEventListener('click', function(){
-            isbnLibroSeleccionado=this.id;
+    btnsComprarLibro.forEach((btn) => {
+        btn.addEventListener('click', function () {
+            isbnLibroSeleccionado = this.id;
             confirmarCompra();
         })
     })
 
     // se ocupa getch API y async y await
-    const confirmarCompra=async()=>{
-        await fetch('http://127.0.0.1:5000/comprarLibro', {
-            method:'POST',
-            mode:'same-origin',
-            credentials:'same-origin',
-            headers:{
-                'Content-Type':'application/json',
-                'X-CSRF-TOKEN': csrf_token
+    const confirmarCompra = () => {
+
+        Swal.fire({
+            title: '¿Confirma la compra del libro?',
+            inputAttributes: {
+                autocapitalize: 'off'
             },
-            body:JSON.stringify({
-                'isbn': isbnLibroSeleccionado
-            })
-        }).then(response=>{
-            if(!response.ok){
-                console.error("Error!");
-            }
-            return response.json();
-        }).then(data=>{
-            console.log("Libro comprado!");
-        }).catch(error=>{
-            console.error(`Error: ${error}`);
+            showCancelButton: true,
+            confirmButtonText: 'Comprar',
+            showLoaderOnConfirm: true,
+            preConfirm: async () => {
+                return await fetch(`${window.origin}/comprarLibro`, {
+                    method: 'POST',
+                    mode: 'same-origin',
+                    credentials: 'same-origin',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': csrf_token
+                    },
+                    body: JSON.stringify({
+                        'isbn': isbnLibroSeleccionado
+                    })
+                }).then(response => {
+                    if (!response.ok) {
+                        // console.error("Error!");
+                        notificacionSwal('Error', response.statusText, 'error', 'Cerrar')
+                    }
+                    return response.json();
+                }).then(data => {
+                    // console.log("Libro comprado!");
+                    notificacionSwal('¡Exito!', 'Libro Comprado', 'success', '¡Ok!')
+                }).catch(error => {
+                    // console.error(`Error: ${error}`);
+                    notificacionSwal('Error', error, 'error', 'Cerrar')
+                });
+            },
+            allowOutsideClick: () => false,
+            allowEscapeKey: () => false
         });
+
+
     };
 })();
 
