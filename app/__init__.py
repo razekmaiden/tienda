@@ -1,22 +1,24 @@
+import traceback
 from flask import Flask, render_template, request, url_for, redirect, flash, jsonify
 #from flask_mysqldb import MySQL
 from peewee import MySQLDatabase, Model, CharField, IntegerField, FloatField
 from flask_wtf.csrf import CSRFProtect
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
+from flask_mail import Mail
 
 from config import config
-
-from .const import *
-import traceback
 
 from .models.ModeloCompra import ModeloCompra
 from .models.ModeloLibro import ModeloLibro
 from .models.ModeloUsuario import ModeloUsuario
 
-
 from .models.entities.Usuario import Usuario
 from .models.entities.Libro import Libro
 from .models.entities.Compra import Compra
+
+from .const import *
+from .emails import confirmacion_compra
+
 app = Flask(__name__)
 
 
@@ -24,7 +26,7 @@ app = Flask(__name__)
 csrf = CSRFProtect()
 db = MySQLDatabase(**config['development'].DB_CREDENTIALS)
 login_manager_app = LoginManager(app) # administracion de login
-
+mail = Mail()
 # Define a model representing a table in the database
 
 #print(db)
@@ -72,7 +74,7 @@ def logout():
 def index():
     if current_user.is_authenticated:
         if current_user.tipousuario.id == 1: # usuario admin
-            libros_vendidos = []
+            libros_vendidos = ModeloLibro.listar_libros_vendidos(db)
             data = {
                 'titulo': 'Libros Vendidos',
                 'libros_vendidos': libros_vendidos
@@ -107,10 +109,11 @@ def comprar_libro():
     data_request = request.get_json() #recupero el json envisdo como parte de la peticion
     data = {}
     try:
-        libro = Libro(data_request["isbn"], None, None, None, None)
+        #libro = Libro(data_request["isbn"], None, None, None, None)
+        libro = ModeloLibro.leer_libro(db, data_request['isbn'])
         compra = Compra(None, libro, current_user)
-        
         data['exito']= ModeloCompra.registrar_compra(db, compra)
+        confirmacion_compra(app, mail, current_user, libro)
     except Exception as ex:
         data['mensaje']=format(ex)
         data['exito']=False
@@ -127,6 +130,7 @@ def pagina_no_autorizada(error):
 def inicializar_app(config): # Aca se ingresa como argumento la configuracion definida en config.py
     app.config.from_object(config)
     csrf.init_app(app)
+    mail.init_app(app)
     #print(app.config)
     app.register_error_handler(404, pagina_no_encontrada) # El manejador de errores permite redirigir a la vista correcta cuando hay un error 404 en este caso. 
     app.register_error_handler(401, pagina_no_autorizada) # 401 Error de autenticacion, no autorizado
